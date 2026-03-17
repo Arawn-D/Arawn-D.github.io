@@ -3,270 +3,390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dokka Vijay | AI Engineer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+    <title>Dokka Vijay | AI Engineer Portfolio</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #000; }
-        body { font-family: 'Syne', sans-serif; color: #fff; cursor: none; }
+        :root {
+            --bg: #0a0a0a;
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --text: #e0e0e0;
+            --accent: #ff00ea;
+        }
 
-        #cur { position: fixed; width: 10px; height: 10px; background: #e8ff47; border-radius: 50%; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; }
-        #cur2 { position: fixed; width: 36px; height: 36px; border: 1px solid rgba(232, 255, 71, .3); border-radius: 50%; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: width .2s, height .2s, border-color .2s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
 
-        #c { position: fixed; inset: 0; z-index: 1; }
+        #canvas { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: -1; 
+            width: 100vw;
+            height: 100vh;
+        }
 
-        #loader { position: fixed; inset: 0; z-index: 9000; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity .8s ease; }
-        #loader.out { opacity: 0; pointer-events: none; }
-        .ld-bar-wrap { width: 200px; height: 1px; background: rgba(255, 255, 255, .08); margin-top: 1rem; }
-        .ld-bar { height: 100%; background: #e8ff47; width: 0; transition: width .1s; }
-        .ld-txt { font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: .2em; color: rgba(255, 255, 255, .3); margin-top: .8rem; }
-        .ld-name { font-family: 'Syne', sans-serif; font-size: .8rem; font-weight: 800; letter-spacing: .3em; color: rgba(255, 255, 255, .6); text-transform: uppercase; }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.9) 100%);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-        #ui { position: fixed; inset: 0; z-index: 100; pointer-events: none; }
-        nav { position: absolute; top: 0; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 1.8rem 3rem; pointer-events: all; }
-        .nlogo { font-size: .85rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; opacity: 0; transition: opacity .5s; }
-        .nlinks { display: flex; gap: 2rem; list-style: none; }
-        .nlinks a { font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: .14em; text-transform: uppercase; color: rgba(255, 255, 255, .45); text-decoration: none; cursor: none; transition: color .25s; pointer-events: all; }
-        .nlinks a:hover { color: #e8ff47; }
-        .pip { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; display: inline-block; margin-right: 6px; animation: pip 2s ease-in-out infinite; }
-        @keyframes pip { 0%, 100% { opacity: 1; } 50% { opacity: .3; } }
-        .nstatus { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: .12em; color: rgba(255, 255, 255, .3); opacity: 0; transition: opacity .5s; }
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
 
-        .section { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 0 3rem; opacity: 0; pointer-events: none; transition: opacity .6s ease; }
-        .section.active { opacity: 1; pointer-events: all; }
+        .logo {
+            font-size: 1.6rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
 
-        #s0 { padding-left: 3rem; }
-        .hero-pre { font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(232, 255, 71, .7); margin-bottom: 1.2rem; display: flex; align-items: center; gap: 10px; }
-        .hero-pre::before { content: ''; width: 28px; height: 1px; background: rgba(232, 255, 71, .4); }
-        h1.hero-name { font-size: clamp(5rem, 11vw, 10rem); font-weight: 800; line-height: .9; letter-spacing: -.02em; transform: translateY(30px); opacity: 0; transition: transform .9s cubic-bezier(.16, 1, .3, 1), opacity .9s ease; }
-        h1.hero-name.in { transform: translateY(0); opacity: 1; }
-        h1.hero-name em { font-style: italic; font-weight: 400; color: transparent; -webkit-text-stroke: 1.5px rgba(255, 255, 255, .25); }
-        .hero-role { font-family: 'DM Mono', monospace; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(232, 255, 71, .8); margin-top: 1.2rem; transform: translateY(20px); opacity: 0; transition: transform .9s .15s cubic-bezier(.16, 1, .3, 1), opacity .9s .15s ease; }
-        .hero-role.in { transform: translateY(0); opacity: 1; }
-        .hero-desc { max-width: 420px; font-size: .92rem; line-height: 1.9; color: rgba(255, 255, 255, .45); margin-top: 1.2rem; transform: translateY(20px); opacity: 0; transition: transform .9s .25s cubic-bezier(.16, 1, .3, 1), opacity .9s .25s ease; }
-        .hero-desc.in { transform: translateY(0); opacity: 1; }
+        .nav-links { 
+            display: flex; 
+            gap: 35px; 
+            list-style: none;
+        }
+        
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            opacity: 0.8;
+            transition: 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+        
+        .nav-links a:hover { 
+            opacity: 1; 
+            color: var(--primary); 
+        }
 
-        .scroll-hint { position: absolute; bottom: 2.5rem; left: 3rem; font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: .16em; color: rgba(255, 255, 255, .2); display: flex; align-items: center; gap: 10px; animation: fadeInUp .8s .6s both; }
-        .scroll-hint::after { content: ''; width: 40px; height: 1px; background: rgba(255, 255, 255, .15); }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 0 30px; 
+        }
 
-        #s1 { padding-left: 3rem; max-width: 800px; }
-        .sec-idx { font-family: 'DM Mono', monospace; font-size: .55rem; letter-spacing: .18em; text-transform: uppercase; color: rgba(255, 255, 255, .25); margin-bottom: .8rem; }
-        h2.sec-title { font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: .95; letter-spacing: -.02em; margin-bottom: 1.5rem; }
-        h2.sec-title span { color: #e8ff47; }
-        .menina-feat-list { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; margin-top: 1.5rem; }
-        .mf-item { display: flex; align-items: flex-start; gap: .6rem; font-family: 'DM Mono', monospace; font-size: .62rem; letter-spacing: .04em; color: rgba(255, 255, 255, .4); line-height: 1.7; }
-        .mf-num { color: #7b61ff; flex-shrink: 0; font-size: .52rem; }
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 120px 0;
+        }
 
-        #s2 { padding-left: 3rem; }
-        .proj-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem; max-width: 900px; }
-        .pc { border: 1px solid rgba(255, 255, 255, .06); padding: 1.6rem; position: relative; transition: border-color .3s, background .3s; cursor: none; pointer-events: all; }
-        .pc:hover { border-color: rgba(232, 255, 71, .2); background: rgba(232, 255, 71, .02); }
-        .pc-n { font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: .12em; color: rgba(255, 255, 255, .2); margin-bottom: .8rem; }
-        .pc-badge { display: inline-block; font-family: 'DM Mono', monospace; font-size: .5rem; letter-spacing: .1em; text-transform: uppercase; padding: .2rem .6rem; border: 1px solid; margin-bottom: .6rem; }
-        .pc-badge.live { border-color: rgba(74, 222, 128, .3); color: #4ade80; }
-        .pc-badge.bld { border-color: rgba(251, 146, 60, .3); color: #fb923c; }
-        .pc-badge.res { border-color: rgba(123, 97, 255, .3); color: #7b61ff; }
-        .pc-title { font-size: .95rem; font-weight: 800; letter-spacing: .04em; margin-bottom: .5rem; }
-        .pc-title.ac { color: #e8ff47; }
-        .pc-desc { font-size: .68rem; line-height: 1.85; color: rgba(255, 255, 255, .35); }
-        .pc-stack { display: flex; flex-wrap: wrap; gap: 5px; margin-top: .8rem; }
-        .sc { font-family: 'DM Mono', monospace; font-size: .48rem; padding: .2rem .55rem; background: rgba(255, 255, 255, .03); border: 1px solid rgba(255, 255, 255, .08); color: rgba(255, 255, 255, .3); letter-spacing: .06em; text-transform: uppercase; }
+        .hero { 
+            text-align: center; 
+            padding-top: 100px;
+        }
+        
+        .hero h1 {
+            font-size: clamp(4rem, 12vw, 8rem);
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero .subtitle {
+            font-size: 1.4rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+        }
 
-        #s3 { padding-left: 3rem; }
-        .sk-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255, 255, 255, .04); max-width: 800px; margin-top: 2rem; }
-        .skc { background: #000; padding: 1.4rem 1.6rem; cursor: none; transition: background .3s; pointer-events: all; }
-        .skc:hover { background: rgba(255, 255, 255, .03); }
-        .sk-cat { font-family: 'DM Mono', monospace; font-size: .48rem; letter-spacing: .14em; text-transform: uppercase; color: #7b61ff; margin-bottom: .35rem; }
-        .sk-name { font-size: .8rem; font-weight: 700; color: #fff; margin-bottom: .3rem; }
-        .sk-items { font-family: 'DM Mono', monospace; font-size: .58rem; line-height: 1.9; color: rgba(255, 255, 255, .3); }
-        .sk-bar { height: 1px; background: rgba(255, 255, 255, .06); margin-top: .9rem; }
-        .sk-fill { height: 100%; background: linear-gradient(90deg, #7b61ff, #e8ff47); }
+        .hero .tagline {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.5);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
 
-        #s4 { padding-left: 3rem; }
-        h2.contact-h { font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: .95; margin-bottom: 2rem; }
-        h2.contact-h span { color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .2); }
-        .c-email { font-family: 'DM Mono', monospace; font-size: .9rem; letter-spacing: .1em; color: #e8ff47; text-decoration: none; cursor: none; display: block; margin-bottom: 1rem; transition: opacity .25s; }
-        .c-email:hover { opacity: .6; }
-        .c-meta { font-family: 'DM Mono', monospace; font-size: .6rem; letter-spacing: .1em; color: rgba(255, 255, 255, .25); margin-bottom: .3rem; }
-        .social-row { display: flex; gap: 1rem; margin-top: 1.5rem; }
-        .soc { font-family: 'DM Mono', monospace; font-size: .58rem; letter-spacing: .12em; text-transform: uppercase; padding: .55rem 1.2rem; border: 1px solid rgba(255, 255, 255, .1); color: rgba(255, 255, 255, .4); text-decoration: none; cursor: none; transition: all .25s; }
-        .soc:hover { border-color: #e8ff47; color: #e8ff47; }
+        .section-title {
+            font-size: 3rem;
+            margin-bottom: 60px;
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            font-weight: 800;
+        }
+        
+        .section-title::after {
+            content: '';
+            height: 2px;
+            flex-grow: 1;
+            background: linear-gradient(to right, var(--primary), transparent);
+        }
 
-        #snav { position: absolute; right: 2.5rem; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: .9rem; pointer-events: all; }
-        .sdot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, .18); cursor: none; transition: all .3s; border: 1px solid transparent; }
-        .sdot.active { background: #e8ff47; box-shadow: 0 0 8px rgba(232, 255, 71, .5); }
-        .sdot:hover { border-color: rgba(255, 255, 255, .4); }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 35px;
+            margin-top: 40px;
+        }
 
-        #toverlay { position: fixed; inset: 0; z-index: 500; background: #000; opacity: 0; pointer-events: none; transition: opacity .35s ease; }
-        #toverlay.in { opacity: 1; }
-        #warp-msg { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 600; font-family: 'DM Mono', monospace; font-size: .65rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(255, 255, 255, .4); opacity: 0; transition: opacity .3s; pointer-events: none; }
-        #warp-msg.show { opacity: 1; }
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 45px;
+            border-radius: 20px;
+            transition: 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            background: rgba(0, 242, 255, 0.05);
+            box-shadow: 0 20px 60px rgba(0, 242, 255, 0.2);
+        }
+        
+        .card h3 { 
+            color: var(--primary); 
+            margin-bottom: 20px; 
+            font-size: 1.8rem; 
+            font-weight: 700;
+        }
+        
+        .card p { 
+            color: rgba(255, 255, 255, 0.7); 
+            font-size: 1rem; 
+            line-height: 1.8;
+        }
+
+        .contact-content {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 100px 50px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .contact-content h2 {
+            font-size: 3.5rem;
+            margin-bottom: 30px;
+            font-weight: 900;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: var(--primary);
+            color: #000;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            margin: 15px;
+            transition: 0.3s;
+            font-size: 1rem;
+        }
+        
+        .btn:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 40px var(--primary); 
+        }
+        
+        .btn.outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            nav { 
+                padding: 20px 30px; 
+            }
+            .nav-links { 
+                display: none; 
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-    <div id="cur"></div>
-    <div id="cur2"></div>
+    <canvas id="canvas"></canvas>
+    <div class="overlay"></div>
 
-    <div id="loader">
-        <div class="ld-name">Dokka Vijay</div>
-        <div class="ld-bar-wrap"><div class="ld-bar" id="ldbar"></div></div>
-        <div class="ld-txt" id="ldtxt">Initialising WebGL</div>
-    </div>
+    <nav>
+        <div class="logo">VIJAY.AI</div>
+        <ul class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#about">Systems</a>
+            <a href="#projects">Projects</a>
+            <a href="#contact">Connect</a>
+        </ul>
+    </nav>
 
-    <canvas id="c"></canvas>
+    <div class="container">
+        <section id="home" class="hero">
+            <div class="subtitle">AI Engineer & Systems Architect</div>
+            <h1>DOKKA VIJAY</h1>
+            <p class="tagline">Building the next generation of intelligent systems through LLMs, RAG pipelines, and deep learning architectures.</p>
+        </section>
 
-    <div id="toverlay"></div>
-    <div id="warp-msg">Warping</div>
-
-    <div id="ui">
-        <nav>
-            <div class="nlogo" id="nlogo">VIJAY.DEV</div>
-            <ul class="nlinks">
-                <li><a href="#" onclick="goTo(1);return false">Menina AI</a></li>
-                <li><a href="#" onclick="goTo(2);return false">Projects</a></li>
-                <li><a href="#" onclick="goTo(3);return false">Skills</a></li>
-                <li><a href="#" onclick="goTo(4);return false">Contact</a></li>
-            </ul>
-            <div class="nstatus" id="nstatus"><span class="pip"></span>Available for work</div>
-        </nav>
-
-        <div class="section active" id="s0">
-            <div class="hero-pre">AI Engineer | LLM | RAG | TTS</div>
-            <h1 class="hero-name" id="hname">Dokka<br><em>Vijay</em></h1>
-            <div class="hero-role" id="hrole">Building Intelligence. End-to-End.</div>
-            <p class="hero-desc" id="hdesc">LLM systems, RAG pipelines, autonomous agents, and expressive text-to-speech. Currently building Menina AI.</p>
-            <div class="scroll-hint">Scroll to navigate</div>
-        </div>
-
-        <div class="section" id="s1">
-            <div class="sec-idx">01 | Current Build 2025</div>
-            <h2 class="sec-title">Menina<br><span>AI</span></h2>
-            <p style="font-family: 'DM Mono', monospace; font-size: .68rem; line-height: 1.95; color: rgba(255, 255, 255, .4); max-width: 480px;">Not a code generator. A real development partner with memory, sandbox execution, and project-wide intelligence.</p>
-            <div class="menina-feat-list">
-                <div class="mf-item"><span class="mf-num">01</span>Safe Sandbox</div>
-                <div class="mf-item"><span class="mf-num">02</span>Built-in enhancer</div>
-                <div class="mf-item"><span class="mf-num">03</span>Reference Engine</div>
-                <div class="mf-item"><span class="mf-num">04</span>One-command setup</div>
-                <div class="mf-item"><span class="mf-num">05</span>Project Map</div>
-                <div class="mf-item"><span class="mf-num">06</span>Knowledge Memory</div>
-                <div class="mf-item"><span class="mf-num">07</span>Pain detection</div>
-                <div class="mf-item"><span class="mf-num">08</span>End-to-End lifecycle</div>
-            </div>
-        </div>
-
-        <div class="section" id="s2">
-            <div class="sec-idx">02 | Selected Work</div>
-            <h2 class="sec-title">Projects</h2>
-            <div class="proj-row">
-                <div class="pc">
-                    <div class="pc-n">P 001</div>
-                    <div class="pc-badge bld">In Development</div>
-                    <div class="pc-title ac">MENINA AI</div>
-                    <p class="pc-desc">AI dev partner with sandbox execution and lifecycle support.</p>
-                    <div class="pc-stack"><span class="sc">LLMs</span><span class="sc">RAG</span><span class="sc">Python</span></div>
+        <section id="about">
+            <h2 class="section-title">Cognitive Systems</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Deep Learning</h3>
+                    <p>Architecting complex neural networks for high-performance AI systems and autonomous intelligent agents.</p>
                 </div>
-                <div class="pc">
-                    <div class="pc-n">P 002</div>
-                    <div class="pc-badge live">Deployed</div>
-                    <div class="pc-title">AFFUSION-X</div>
-                    <p class="pc-desc">Text-to-Audio AI system with emotion-conditioned TTS.</p>
-                    <div class="pc-stack"><span class="sc">TTS</span><span class="sc">NLP</span><span class="sc">Streamlit</span></div>
+                <div class="card">
+                    <h3>RAG Pipelines</h3>
+                    <p>Enterprise-grade retrieval-augmented generation systems that bridge static LLMs with dynamic knowledge bases.</p>
+                </div>
+                <div class="card">
+                    <h3>NLP Systems</h3>
+                    <p>Advanced natural language processing frameworks for semantic understanding, generation, and multilingual applications.</p>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="section" id="s3">
-            <div class="sec-idx">03 | Capabilities</div>
-            <h2 class="sec-title">Tech Stack</h2>
-            <div class="sk-grid">
-                <div class="skc"><div class="sk-cat">Languages</div><div class="sk-name">Programming</div><div class="sk-items">Python | Java | C</div><div class="sk-bar"><div class="sk-fill" style="width: 90%;"></div></div></div>
-                <div class="skc"><div class="sk-cat">AI | ML</div><div class="sk-name">Machine Learning</div><div class="sk-items">NLP | Transformers</div><div class="sk-bar"><div class="sk-fill" style="width: 85%;"></div></div></div>
-                <div class="skc"><div class="sk-cat">LLMs</div><div class="sk-name">Engineering</div><div class="sk-items">RAG | Embeddings</div><div class="sk-bar"><div class="sk-fill" style="width: 82%;"></div></div></div>
+        <section id="projects">
+            <h2 class="section-title">Featured Projects</h2>
+            <div class="grid">
+                <div class="card">
+                    <h3>Menina AI</h3>
+                    <p>Next-generation AI development partner with sandbox execution, knowledge graphs, and intelligent code generation capabilities.</p>
+                </div>
+                <div class="card">
+                    <h3>Affusion-X</h3>
+                    <p>Neural text-to-audio engine with emotion-conditioned synthesis and multilingual support.</p>
+                </div>
+                <div class="card">
+                    <h3>TruthGuard</h3>
+                    <p>Multimodal fake news detection using heterogeneous graph deep learning on live content.</p>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="section" id="s4">
-            <div class="sec-idx">04 | Contact</div>
-            <h2 class="contact-h">Let's build<br>something<br><span>remarkable.</span></h2>
-            <a href="mailto:helloaavijay@gmail.com" class="c-email">helloaavijay@gmail.com</a>
-            <div class="social-row">
-                <a href="https://github.com/Arawn-D" target="_blank" class="soc">GitHub</a>
-                <a href="https://linkedin.com/in/vijay-dokka" target="_blank" class="soc">LinkedIn</a>
+        <section id="contact">
+            <div class="contact-content">
+                <h2>Let's Build Together</h2>
+                <p style="margin-bottom: 50px; font-size: 1.2rem; opacity: 0.7;">Ready to create the next generation of intelligent systems?</p>
+                <a href="mailto:helloaavijay@gmail.com" class="btn"><i class="fas fa-envelope"></i> Email</a>
+                <a href="https://github.com/Arawn-D" class="btn outline"><i class="fab fa-github"></i> GitHub</a>
+                <a href="https://linkedin.com/in/vijay-dokka" class="btn outline"><i class="fab fa-linkedin"></i> LinkedIn</a>
             </div>
-        </div>
-
-        <div id="snav">
-            <div class="sdot active" onclick="goTo(0)" title="Home"></div>
-            <div class="sdot" onclick="goTo(1)" title="Menina"></div>
-            <div class="sdot" onclick="goTo(2)" title="Projects"></div>
-            <div class="sdot" onclick="goTo(3)" title="Skills"></div>
-            <div class="sdot" onclick="goTo(4)" title="Contact"></div>
-        </div>
+        </section>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script>
-        // Minified logic for interactive background and navigation
-        let scene, camera, renderer, currentSection = 0;
-        const totalSections = 5;
-
-        function init() {
+        let scene, camera, renderer, particles;
+        const PARTICLE_COUNT = 2000;
+        
+        function init3D() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('canvas'), 
+                antialias: true, 
+                alpha: true 
+            });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            camera.position.z = 5;
+            renderer.setClearColor(0x000000, 0);
 
-            // Simple particle galaxy
-            const geo = new THREE.BufferGeometry();
-            const pos = new Float32Array(5000 * 3);
-            for(let i=0; i<5000*3; i++) pos[i] = (Math.random() - 0.5) * 15;
-            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-            const mat = new THREE.PointsMaterial({ size: 0.02, color: 0xe8ff47 });
-            const particles = new THREE.Points(geo, mat);
+            const geometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(PARTICLE_COUNT * 3);
+            const colors = new Float32Array(PARTICLE_COUNT * 3);
+
+            for (let i = 0; i < PARTICLE_COUNT; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+
+                const color = new THREE.Color(i % 2 === 0 ? 0x00f2ff : 0x7000ff);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+            }
+
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({
+                size: 0.3,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8,
+                blending: THREE.AdditiveBlending
+            });
+
+            particles = new THREE.Points(geometry, material);
             scene.add(particles);
 
+            camera.position.z = 50;
             animate();
         }
 
         function animate() {
             requestAnimationFrame(animate);
-            scene.rotation.y += 0.001;
+            
+            particles.rotation.y += 0.0008;
+            particles.rotation.x += 0.0004;
+
             renderer.render(scene, camera);
         }
 
-        function goTo(idx) {
-            document.querySelectorAll('.section').forEach((s, i) => s.classList.toggle('active', i === idx));
-            document.querySelectorAll('.sdot').forEach((d, i) => d.classList.toggle('active', i === idx));
-            currentSection = idx;
-        }
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
 
-        // Loader
-        window.addEventListener('load', () => {
-            const bar = document.getElementById('ldbar');
-            let progress = 0;
-            const iv = setInterval(() => {
-                progress += 10;
-                bar.style.width = progress + '%';
-                if(progress >= 100) {
-                    clearInterval(iv);
-                    document.getElementById('loader').classList.add('out');
-                    document.getElementById('nlogo').style.opacity = 1;
-                    document.getElementById('nstatus').style.opacity = 1;
-                    document.getElementById('hname').classList.add('in');
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if(target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
                 }
-            }, 150);
+            });
         });
 
-        window.addEventListener('wheel', (e) => {
-            if(e.deltaY > 0 && currentSection < totalSections - 1) goTo(currentSection + 1);
-            else if(e.deltaY < 0 && currentSection > 0) goTo(currentSection - 1);
-        });
-
-        init();
+        init3D();
     </script>
 </body>
 </html>
