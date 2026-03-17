@@ -1,392 +1,186 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dokka Vijay | AI Engineer Portfolio</title>
+    <title>Dokka Vijay - AI Engineer | ML Specialist</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --bg: #0a0a0a;
-            --primary: #00f2ff;
-            --secondary: #7000ff;
-            --text: #e0e0e0;
-            --accent: #ff00ea;
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap');
         
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: var(--bg); 
-            color: var(--text); 
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a0b2e 0%, #0f0520 50%, #1a0b2e 100%);
+            color: #fff;
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        #canvas { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            z-index: -1; 
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, transparent 0%, rgba(10, 10, 10, 0.9) 100%);
-            pointer-events: none;
-            z-index: 0;
-        }
+        #canvas3d { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; }
+        .content { position: relative; z-index: 1; }
 
         nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 25px 60px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: fixed; top: 0; width: 100%; padding: 30px 60px;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 100; background: rgba(10, 5, 20, 0.7); backdrop-filter: blur(10px);
         }
-
-        .logo {
-            font-size: 1.6rem;
-            font-weight: 900;
-            letter-spacing: 3px;
-            color: var(--primary);
-            text-transform: uppercase;
-        }
-
-        .nav-links { 
-            display: flex; 
-            gap: 35px; 
-            list-style: none;
-        }
-        
+        .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 50px; list-style: none; }
         .nav-links a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            opacity: 0.8;
-            transition: 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
+            color: rgba(255, 255, 255, 0.7); text-decoration: none; font-weight: 600;
+            font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; transition: color 0.3s;
         }
-        
-        .nav-links a:hover { 
-            opacity: 1; 
-            color: var(--primary); 
-        }
+        .nav-links a:hover { color: #fff; }
 
-        .container { 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            padding: 0 30px; 
-        }
+        section { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 60px; }
+        .hero { text-align: left; max-width: 1200px; margin: 0 auto; }
+        .hero-pre { font-size: 1.2rem; color: rgba(255, 255, 255, 0.6); margin-bottom: 20px; letter-spacing: 2px; }
+        .hero h1 { font-size: clamp(4rem, 10vw, 9rem); font-weight: 900; line-height: 0.95; margin-bottom: 40px; letter-spacing: -2px; }
+        .hero .title-line { display: block; background: linear-gradient(90deg, #fff 0%, rgba(255,255,255,0.7) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero .subtitle { font-size: clamp(2rem, 5vw, 4rem); font-weight: 700; color: rgba(200, 150, 255, 0.8); letter-spacing: -1px; }
 
-        section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            position: relative;
-            z-index: 1;
-            padding: 120px 0;
-        }
+        .section-container { max-width: 1200px; margin: 0 auto; width: 100%; }
+        .section-title { font-size: 3rem; font-weight: 700; margin-bottom: 60px; letter-spacing: 8px; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+        .about-text { font-size: 2.5rem; line-height: 1.5; font-weight: 600; max-width: 900px; color: #fff; }
 
-        .hero { 
-            text-align: center; 
-            padding-top: 100px;
-        }
-        
-        .hero h1 {
-            font-size: clamp(4rem, 12vw, 8rem);
-            font-weight: 900;
-            line-height: 1;
-            margin-bottom: 30px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .hero .subtitle {
-            font-size: 1.4rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 20px;
-        }
+        .work-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 40px; margin-top: 60px; }
+        .work-item { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 50px; border-radius: 20px; transition: all 0.4s; }
+        .work-item:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.05); border-color: rgba(200, 150, 255, 0.5); box-shadow: 0 20px 60px rgba(200, 150, 255, 0.2); }
+        .work-number { font-size: 1rem; color: rgba(255, 255, 255, 0.4); margin-bottom: 20px; letter-spacing: 2px; }
+        .work-item h3 { font-size: 2rem; margin-bottom: 15px; font-weight: 700; }
+        .work-item .work-type { color: rgba(200, 150, 255, 0.8); font-size: 1rem; margin-bottom: 20px; letter-spacing: 1px; }
+        .work-item p { font-size: 1rem; line-height: 1.7; color: rgba(255, 255, 255, 0.6); }
 
-        .hero .tagline {
-            font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.5);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
+        .contact-section { text-align: center; }
+        .contact-section h2 { font-size: 4rem; font-weight: 900; margin-bottom: 60px; }
+        .contact-info { font-size: 1.3rem; margin-bottom: 30px; }
+        .contact-info a { color: rgba(200, 150, 255, 0.9); text-decoration: none; border-bottom: 2px solid transparent; transition: border-color 0.3s; }
+        .contact-info a:hover { border-bottom-color: rgba(200, 150, 255, 0.9); }
+        .social-links { display: flex; gap: 30px; justify-content: center; margin-top: 40px; }
+        .social-links a { color: rgba(255, 255, 255, 0.6); text-decoration: none; font-weight: 600; letter-spacing: 1px; transition: color 0.3s; }
+        .social-links a:hover { color: #fff; }
 
-        .section-title {
-            font-size: 3rem;
-            margin-bottom: 60px;
-            display: flex;
-            align-items: center;
-            gap: 25px;
-            font-weight: 800;
-        }
-        
-        .section-title::after {
-            content: '';
-            height: 2px;
-            flex-grow: 1;
-            background: linear-gradient(to right, var(--primary), transparent);
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 35px;
-            margin-top: 40px;
-        }
-
-        .card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 45px;
-            border-radius: 20px;
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary);
-            background: rgba(0, 242, 255, 0.05);
-            box-shadow: 0 20px 60px rgba(0, 242, 255, 0.2);
-        }
-        
-        .card h3 { 
-            color: var(--primary); 
-            margin-bottom: 20px; 
-            font-size: 1.8rem; 
-            font-weight: 700;
-        }
-        
-        .card p { 
-            color: rgba(255, 255, 255, 0.7); 
-            font-size: 1rem; 
-            line-height: 1.8;
-        }
-
-        .contact-content {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.02);
-            padding: 100px 50px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-        
-        .contact-content h2 {
-            font-size: 3.5rem;
-            margin-bottom: 30px;
-            font-weight: 900;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            padding: 18px 40px;
-            background: var(--primary);
-            color: #000;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 700;
-            margin: 15px;
-            transition: 0.3s;
-            font-size: 1rem;
-        }
-        
-        .btn:hover { 
-            transform: scale(1.05); 
-            box-shadow: 0 0 40px var(--primary); 
-        }
-        
-        .btn.outline {
-            background: transparent;
-            border: 2px solid var(--primary);
-            color: var(--primary);
-        }
-
-        @media (max-width: 768px) {
-            nav { 
-                padding: 20px 30px; 
-            }
-            .nav-links { 
-                display: none; 
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        @media (max-width: 768px) { nav { padding: 20px 30px; } .nav-links { display: none; } section { padding: 80px 30px; } .work-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    <div class="overlay"></div>
+    <canvas id="canvas3d"></canvas>
+    <div class="content">
+        <nav>
+            <div class="logo">vijay.ai</div>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#work">Work</a>
+                <a href="#contact">Contact</a>
+            </div>
+        </nav>
 
-    <nav>
-        <div class="logo">VIJAY.AI</div>
-        <ul class="nav-links">
-            <a href="#home">Home</a>
-            <a href="#about">Systems</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Connect</a>
-        </ul>
-    </nav>
-
-    <div class="container">
         <section id="home" class="hero">
-            <div class="subtitle">AI Engineer & Systems Architect</div>
-            <h1>DOKKA VIJAY</h1>
-            <p class="tagline">Building the next generation of intelligent systems through LLMs, RAG pipelines, and deep learning architectures.</p>
+            <div class="hero-pre">Hello! I'm</div>
+            <h1>
+                <span class="title-line">DOKKA</span>
+                <span class="title-line">VIJAY</span>
+            </h1>
+            <div class="subtitle">AI ENGINEER</div>
         </section>
 
         <section id="about">
-            <h2 class="section-title">Cognitive Systems</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Deep Learning</h3>
-                    <p>Architecting complex neural networks for high-performance AI systems and autonomous intelligent agents.</p>
-                </div>
-                <div class="card">
-                    <h3>RAG Pipelines</h3>
-                    <p>Enterprise-grade retrieval-augmented generation systems that bridge static LLMs with dynamic knowledge bases.</p>
-                </div>
-                <div class="card">
-                    <h3>NLP Systems</h3>
-                    <p>Advanced natural language processing frameworks for semantic understanding, generation, and multilingual applications.</p>
+            <div class="section-container">
+                <h2 class="section-title">ABOUT ME</h2>
+                <p class="about-text">I'm an AI engineer with a passion for building intelligent systems. Specialized in LLMs, RAG pipelines, and deep learning architectures. Currently building Menina AI - a next-gen development partner.</p>
+            </div>
+        </section>
+
+        <section id="work">
+            <div class="section-container">
+                <h2 class="section-title">MY WORK</h2>
+                <div class="work-grid">
+                    <div class="work-item">
+                        <div class="work-number">01</div>
+                        <h3>Menina AI</h3>
+                        <div class="work-type">AI Development Partner</div>
+                        <p>Next-generation AI development ecosystem with sandbox execution, knowledge graphs, and intelligent code generation.</p>
+                    </div>
+                    <div class="work-item">
+                        <div class="work-number">02</div>
+                        <h3>Affusion-X</h3>
+                        <div class="work-type">Text-to-Audio AI System</div>
+                        <p>End-to-end neural text-to-audio engine with emotion-conditioned synthesis and multilingual support.</p>
+                    </div>
+                    <div class="work-item">
+                        <div class="work-number">03</div>
+                        <h3>TruthGuard</h3>
+                        <div class="work-type">Fake News Detection</div>
+                        <p>Multimodal fake news detection system using heterogeneous graph deep learning on live URLs.</p>
+                    </div>
+                    <div class="work-item">
+                        <div class="work-number">04</div>
+                        <h3>RAG Pipeline Systems</h3>
+                        <div class="work-type">Enterprise AI</div>
+                        <p>Built enterprise-grade retrieval-augmented generation systems that bridge static LLMs with dynamic knowledge bases.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <section id="projects">
-            <h2 class="section-title">Featured Projects</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Menina AI</h3>
-                    <p>Next-generation AI development partner with sandbox execution, knowledge graphs, and intelligent code generation capabilities.</p>
+        <section id="contact" class="contact-section">
+            <div class="section-container">
+                <h2 class="section-title">CONTACT</h2>
+                <div class="contact-info"><strong>Email</strong><br><a href="mailto:helloaavijay@gmail.com">helloaavijay@gmail.com</a></div>
+                <div class="contact-info"><strong>Location</strong><br>Bapatla, Andhra Pradesh, India</div>
+                <div class="social-links">
+                    <a href="https://github.com/Arawn-D" target="_blank">GITHUB</a>
+                    <a href="https://linkedin.com/in/vijay-dokka" target="_blank">LINKEDIN</a>
                 </div>
-                <div class="card">
-                    <h3>Affusion-X</h3>
-                    <p>Neural text-to-audio engine with emotion-conditioned synthesis and multilingual support.</p>
-                </div>
-                <div class="card">
-                    <h3>TruthGuard</h3>
-                    <p>Multimodal fake news detection using heterogeneous graph deep learning on live content.</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="contact">
-            <div class="contact-content">
-                <h2>Let's Build Together</h2>
-                <p style="margin-bottom: 50px; font-size: 1.2rem; opacity: 0.7;">Ready to create the next generation of intelligent systems?</p>
-                <a href="mailto:helloaavijay@gmail.com" class="btn"><i class="fas fa-envelope"></i> Email</a>
-                <a href="https://github.com/Arawn-D" class="btn outline"><i class="fab fa-github"></i> GitHub</a>
-                <a href="https://linkedin.com/in/vijay-dokka" class="btn outline"><i class="fab fa-linkedin"></i> LinkedIn</a>
             </div>
         </section>
     </div>
 
     <script>
         let scene, camera, renderer, particles;
-        const PARTICLE_COUNT = 2000;
-        
-        function init3D() {
+        function init() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ 
-                canvas: document.getElementById('canvas'), 
-                antialias: true, 
-                alpha: true 
-            });
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas3d'), alpha: true, antialias: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
             renderer.setClearColor(0x000000, 0);
-
             const geometry = new THREE.BufferGeometry();
-            const positions = new Float32Array(PARTICLE_COUNT * 3);
-            const colors = new Float32Array(PARTICLE_COUNT * 3);
-
-            for (let i = 0; i < PARTICLE_COUNT; i++) {
+            const particleCount = 3000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            for (let i = 0; i < particleCount; i++) {
                 positions[i * 3] = (Math.random() - 0.5) * 100;
                 positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
                 positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
-
-                const color = new THREE.Color(i % 2 === 0 ? 0x00f2ff : 0x7000ff);
-                colors[i * 3] = color.r;
-                colors[i * 3 + 1] = color.g;
-                colors[i * 3 + 2] = color.b;
+                const color = new THREE.Color();
+                color.setHSL(0.75 + Math.random() * 0.1, 0.8, 0.6);
+                colors[i * 3] = color.r; colors[i * 3 + 1] = color.g; colors[i * 3 + 2] = color.b;
             }
-
             geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
             geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-            const material = new THREE.PointsMaterial({
-                size: 0.3,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8,
-                blending: THREE.AdditiveBlending
-            });
-
+            const material = new THREE.PointsMaterial({ size: 0.15, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending });
             particles = new THREE.Points(geometry, material);
             scene.add(particles);
-
             camera.position.z = 50;
             animate();
         }
-
         function animate() {
             requestAnimationFrame(animate);
-            
-            particles.rotation.y += 0.0008;
-            particles.rotation.x += 0.0004;
-
+            particles.rotation.y += 0.0005;
+            particles.rotation.x += 0.0002;
             renderer.render(scene, camera);
         }
-
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-
-        // Smooth scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if(target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
-                }
-            });
+        window.addEventListener('scroll', () => {
+            const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+            particles.rotation.y = scrollPercent * Math.PI * 2;
         });
-
-        init3D();
+        init();
     </script>
 </body>
 </html>
