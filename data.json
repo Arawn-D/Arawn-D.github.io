@@ -1,0 +1,83 @@
+{
+  "profile": {
+    "name": "Dokka Vijay",
+    "title": "AI Engineer",
+    "subtitle": "NLP | LLMs | RAG Pipelines | Deep Learning",
+    "bio": "AI Engineer from Andhra Pradesh, India, specializing in end-to-end ML pipelines, LLM integration, and RAG-based applications. Currently pursuing MCA at Vignana's Lara Institute.",
+    "location": "Gullapalli, Bapatla 522309, Andhra Pradesh, India",
+    "email": "helloaavijay@gmail.com",
+    "github": "https://github.com/Arawn-D",
+    "linkedin": "https://linkedin.com/in/vijay-dokka",
+    "phone": "+91 9703658743"
+  },
+  "education": [
+    {
+      "degree": "MCA - Master of Computer Applications",
+      "institute": "Vignana's Lara Institute of Technology & Science",
+      "period": "Oct 2023 - Jul 2025",
+      "gpa": "8.1",
+      "icon": "graduation-cap"
+    },
+    {
+      "degree": "B.Sc. Computer Science",
+      "institute": "Sri Velagapudi Ramakrishna Memorial College",
+      "period": "Feb 2020 - Aug 2023",
+      "gpa": "7.8",
+      "icon": "graduation-cap"
+    }
+  ],
+  "certifications": [
+    "Introduction to Cyber Security - Cisco",
+    "Essentials in Python - Cisco",
+    "AI-ML & Cloud Computing - AWS NPTEL"
+  ],
+  "skills": {
+    "AI & Machine Learning": ["Neural Networks", "NLP", "Text Classification", "TTS", "Transformers", "Deep Learning"],
+    "LLMs & RAG": ["Prompt Engineering", "RAG Pipelines", "Embeddings", "Fine-tuning", "LLM Integration"],
+    "Dev & Cloud": ["Python", "Core Java", "Streamlit", "REST APIs", "AWS EC2/S3/Lambda", "SQL"]
+  },
+  "projects": [
+    {
+      "id": 1,
+      "name": "Menina AI",
+      "tagline": "Your AI Development Partner",
+      "status": "In Development",
+      "year": "2025",
+      "color": "#00ffaa",
+      "tech": ["Python", "LLMs", "RAG", "Sandbox", "Knowledge Graphs"],
+      "description": "A next-gen AI development partner that thinks, plans, and codes alongside you. Goes beyond code generation to become a real developing partner.",
+      "features": [
+        { "icon": "shield-alt", "title": "Sandbox Environment", "desc": "Runs updated code safely in isolated sandbox. Review results before applying." },
+        { "icon": "magic", "title": "Prompt Enhancer", "desc": "Built-in prompt enhancer that suggests corrections before sending." },
+        { "icon": "lightbulb", "title": "Reference Projects", "desc": "Shows matching reference projects for better understanding." },
+        { "icon": "bolt", "title": "Easy Installation", "desc": "One-click install, auto-configures everything with user permissions." },
+        { "icon": "map", "title": "Project Map", "desc": "Structural visual representation map of the entire project." },
+        { "icon": "brain", "title": "Low Hallucination", "desc": "Not just code generation - a real developing partner with less hallucination." },
+        { "icon": "code", "title": "End-to-End Dev", "desc": "Shows pain points and suggests corrections or upgrades on every prompt." },
+        { "icon": "rocket", "title": "Easy to Use", "desc": "Intuitive UI designed to be easy to use and adopt from day one." },
+        { "icon": "robot", "title": "AI Assistant", "desc": "Built-in AI assistant that helps with everything inside the tool." },
+        { "icon": "database", "title": "Knowledge Graph", "desc": "Builds a knowledge graph about user and project. Fixes failing sections in background." }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Affusion-X",
+      "tagline": "AI Text-to-Audio Generation",
+      "status": "Completed",
+      "year": "March 2025",
+      "color": "#7c3aed",
+      "tech": ["Python", "Streamlit", "TTS", "Multilingual", "Emotion Conditioning"],
+      "description": "End-to-end AI system converting text into expressive audio with multilingual and emotion-conditioned synthesis. Built complete workflow with deployment via Streamlit."
+    },
+    {
+      "id": 3,
+      "name": "Fake News Detection",
+      "tagline": "Heterogeneous Graph Deep Learning",
+      "status": "Completed",
+      "year": "December 2024",
+      "color": "#f59e0b",
+      "tech": ["Python", "Deep Learning", "Graph Networks", "NLP", "Multimodal"],
+      "description": "Full-stack AI app that ingests live URLs, extracts multimodal content (text and images), and performs fake news classification with interactive feedback."
+    }
+  ]
+}
